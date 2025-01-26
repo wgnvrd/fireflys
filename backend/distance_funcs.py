@@ -29,20 +29,20 @@ def update_json(lat1, long1, lat2, long2):
     result = AeroAPI.get(f"{api_url}/flights/search", params=us_bounding)
     bounded_flights = result.json()
 
-    with open("backend/bounded_flights.json", 'w', encoding='utf-8') as f:
+    with open("bounded_flights.json", 'w', encoding='utf-8') as f:
         json.dump(bounded_flights, f, ensure_ascii=False, indent=4) 
 
 update_json(46, -124, 41, -116)
 
 def find_closest_flight(fire_lat, fire_long): 
     #pythagorian theorum for flight with closest lat/long
-    with open("backend/bounded_flights.json", 'r', encoding='utf-8') as r:
+    with open("bounded_flights.json", 'r', encoding='utf-8') as r:
         bounded_flights = json.load(r)
     closest_flight = min(bounded_flights["flights"], key = lambda x: math.sqrt(abs(fire_lat - x["last_position"]["latitude"])**2 + abs(fire_long - x["last_position"]["longitude"])**2))
     return closest_flight["last_position"]["latitude"], closest_flight["last_position"]["longitude"], closest_flight["last_position"]["heading"], closest_flight["ident"]
 
 def find_all_flights(fire_lat, fire_long):
-    with open("backend/bounded_flights.json", 'r', encoding='utf-8') as r:
+    with open("bounded_flights.json", 'r', encoding='utf-8') as r:
         bounded_flights = json.load(r)
     a, b, closest_ident = find_closest_flight(fire_lat, fire_long)
 
