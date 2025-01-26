@@ -17,6 +17,10 @@ def find_closest(fire_lat, fire_long):
     closest_flight = min(us_flights["flights"], key = lambda x: abs(fire_lat - x["last_position"]["latitude"]) + abs(fire_long - x["last_position"]["longitude"]))
     return closest_flight
 
+def get_flights():
+    data = None
+
+    return data
 if __name__ == "__main__": 
     with open("us_flights.json", 'w', encoding='utf-8') as f:
         json.dump(us_flights, f, ensure_ascii=False, indent=4) 
