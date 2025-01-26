@@ -4,18 +4,27 @@ load_dotenv()
 
 access_key = os.getenv('FLIGHTAWARE_KEY')
  
-api_url = "https://aeroapi.flightaware.com/aeroapi"
-us_bounding = {"query":'-latlong "50 -130 25 -60"'}
 
-AeroAPI = requests.Session()
-AeroAPI.headers.update({"x-apikey": access_key})
 
-result = AeroAPI.get(f"{api_url}/flights/search", params=us_bounding)
-us_flights = result.json()
+def update_json(lat1, long1, lat2, long2):
+    api_url = "https://aeroapi.flightaware.com/aeroapi"
+    lat_long_string = f'-latlong "{lat1} {long1} {lat2} {long2}"'
+    us_bounding = {"query": lat_long_string}
 
-def find_closest_flight(fire_lat, fire_long):
+    AeroAPI = requests.Session()
+    AeroAPI.headers.update({"x-apikey": access_key})
+
+    result = AeroAPI.get(f"{api_url}/flights/search", params=us_bounding)
+    bounded_flights = result.json()
+
+    with open("bounded.json", 'w', encoding='utf-8') as f:
+        json.dump(bounded_flights, f, ensure_ascii=False, indent=4) 
+
+def find_closest_flight(fire_lat, fire_long): 
     #pythagorian theorum for flight with closest lat/long
-    closest_flight = min(us_flights["flights"], key = lambda x: math.sqrt(abs(fire_lat - x["last_position"]["latitude"])**2 + abs(fire_long - x["last_position"]["longitude"])**2))
+    with open("bounded.json", 'r', encoding='utf-8') as r:
+        reloaded_json = json.load(r)
+    closest_flight = min(reloaded_json["flights"], key = lambda x: math.sqrt(abs(fire_lat - x["last_position"]["latitude"])**2 + abs(fire_long - x["last_position"]["longitude"])**2))
     return closest_flight["last_position"]["latitude"], closest_flight["last_position"]["longitude"]
 
 def next_x_waypoints(x_points: int, flight, get_all = False):
@@ -37,8 +46,7 @@ def find_closest_route(fire_lat, fire_long):
 
 
 if __name__ == "__main__": 
-    with open("us_flights.json", 'w', encoding='utf-8') as f:
-        json.dump(us_flights, f, ensure_ascii=False, indent=4) 
+
     print(json.dumps(find_closest_flight(35.09, -90.88), indent=4))
     #print(find_closest_flight(35, -90))
     #example_flight = us_flights["flights"][2]
