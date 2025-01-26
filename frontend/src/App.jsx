@@ -5,9 +5,13 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { MapContainer } from 'react-leaflet/MapContainer'
 import { TileLayer } from 'react-leaflet/TileLayer'
-import { useMap } from 'react-leaflet/hooks'
+import { useMapEvents } from 'react-leaflet/hooks'
+// import { useMap } from 'react-leaflet/hooks'
 
 function App() {
+  const [currentBounds, setCurrentBounds] = useState(null);
+  const [flights, setFlights] = useState([]);
+  const [map, setMap] = useState(null);
   // const [state, setState] = useState(null);
   // const [numbers, setNumbers] = useState("");
   // const [result, setResult] = useState(null);
@@ -27,11 +31,43 @@ function App() {
   //     console.error("Error analyzing data: ", error);
   //   }
   // };
+  function MapEventsComponent() {
+    const map = useMapEvents({
+      moveend: () => {
+        console.log(map.getBounds());
+        setCurrentBounds(map.getBounds());
+      },
+    });
+    setMap(map);
+    return null;
+  }
+  // const map = useMapEvents({
+  //     moveend: () => {
+  //         setCurrentBounds(map.getBounds());
+  //     },
+  // })
 
-  const hi = () => { console.log('hi'); }
+  const fetchFlights = async () => {
+    try {
+      const response = axios.post("http://localhost:5000/flights", {
+          bounds: currentBounds,
+        }).then((response) => {
+          setFlights(response.data);
+          // setResult(response.data);
+        }
+      )
+    } catch (error) {
+      console.error("Error fetching flights: ", error);
+    }
+  };
+
+  // const hi = () => { console.log('hi'); }
   useEffect(() => {
-    hi();
-    const intervalId = setInterval(hi, 1000);
+    // hi();
+    fetchFlights();
+    // console.log(map.getBounds());
+    // setCurrentBounds(map.getBounds());
+    const intervalId = setInterval(fetchFlights, 1000);
     return () => clearInterval(intervalId);
   }, []);
   Form() /************************************************** BIG FAT COMMENT FOR WHERE FORM IS AGHHHHHHHHHH ******************************************************************************/ 
@@ -79,7 +115,7 @@ function App() {
               attribution='&copy; CNES, Distribution Airbus DS, © Airbus DS, © PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.png"
             />
-
+            <MapEventsComponent />
           </MapContainer>
         </div>
         {/* Right Sidebar */}

@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 import os
 import pandas as pd
+import flightaware_test
 
 load_dotenv()
 
@@ -20,7 +21,16 @@ det = dat.sort_values(by='confidence' , ascending=False)
 det = det[det["confidence"] >= confLwrBnd] # detected fires of concern
 det = det[det['confidence'] <= confUpperBnd] #filter out confirmed fires
 
-coords = det.loc[:,["latitude" , "longitude"]]
+lat = det["latitude"].to_numpy()
+lon = det["longitude"].to_numpy()
+
+for (x, y) in zip(lat, lon):
+    print(flightaware_test.find_closest(x,y))
+
+
+
+
+
 
 
 
