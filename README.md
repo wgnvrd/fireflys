@@ -11,3 +11,5 @@ Main: gets data from the NASA FIRMS API, filters reports with low confidence out
 flightaware_test.py: Gets plane data from the FlightAware AeroAPI to find a plane with coordinates near the fire, who's waypoints (coordinates that track the planes path of flight) are close to the fire. 
 
 The fire could then be reported to the pilots aboard the plane who could choose to fly over the fire equipped with a camera to provide an enhanced imagery to assist in response, and prevent tragedies like those plaguing LA currently.
+
+Uses React with the Leaflet module to load in API data and display on a map, as well as provide a GUI to allow users to adjust desired confidence intervals for possible detected fires.
