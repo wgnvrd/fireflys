@@ -32,6 +32,12 @@ det = det[det['confidence'] <= confUpperBnd] #filter out confirmed fires
 
 det = det.sort_values(by='confidence' , ascending=False)
 
+coords = det.loc[:,["latitude" , "longitude"]]
+
+
+
+
+
 
 
 
