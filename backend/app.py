@@ -5,13 +5,17 @@ import numpy as np
 import firms_API as fPI
 import distance_funcs as dist
 
-app = Flask(__name__)#, static_folder="static")
+app = Flask(__name__, static_folder="static")
 CORS(app)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
-    # return send_from_directory(app.static_folder, 'index.html')
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/assets/<path:filename>')
+def assets(filename):
+    return send_from_directory(f"{app.static_folder}/assets", filename)
+     
 
 @app.route('/flights', methods=['POST'])
 def flights():

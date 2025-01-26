@@ -56,6 +56,11 @@ function MapEventsComponent({ranges}) {
     }
   };
 
+  // fetch flights when confidence ranges change
+  useEffect(() => {
+    fetchFlights();
+  }, [ranges]);
+
   useEffect(() => {
     fetchFlights();
     setCurrentBounds(map.getBounds());
@@ -107,7 +112,7 @@ function App() {
     //degErr: 35,
     conf: {
       high: 100.0,
-      low: 50.0,
+      low: 90.0,
     }
   });
 

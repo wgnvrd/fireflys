@@ -32,7 +32,7 @@ def update_json(lat1, long1, lat2, long2):
     with open("bounded_flights.json", 'w', encoding='utf-8') as f:
         json.dump(bounded_flights, f, ensure_ascii=False, indent=4) 
 
-update_json(46, -124, 41, -116)
+update_json(50, -128, 23, -68)
 
 def find_closest_flight(fire_lat, fire_long): 
     #pythagorian theorum for flight with closest lat/long
