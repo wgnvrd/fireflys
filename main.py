@@ -4,17 +4,31 @@ import pandas as pd
 
 load_dotenv()
 
-MAP_KEY = os.getenv('MAP_KEY')
+MAP_KEY = os.getenv('FIRMS_MAP_KEY')
 
-url = 'https://firms.modaps.eosdis.nasa.gov/mapserver/mapkey_status/?MAP_KEY=' + str(MAP_KEY) + '/MODIS_NRT/-125,25,-64,50' #url and filter bounds for contigous US
+
+url = 'https://firms.modaps.eosdis.nasa.gov/api/area/csv/' + str(MAP_KEY) + '/MODIS_NRT/-125,25,-64,50/10' #url and filter bounds for contigous US
+
+# def get_transaction_count() :
+#   count = 0
+#   try:
+#     df = pd.read_json(url,  typ='series')
+#     count = df['current_transactions']
+#   except:
+#     print ("Error in our call.")
+#   return count
+
+# print(get_transaction_count())
 
 dat = pd.read_csv(url) # data from url
 
-det = dat[dat["confidence"] >= 50.0] # detected fires of concern
+confLwrBnd = 50.0
 
-det.describe() # debug and verify confidence is above 50
+det = dat[dat["confidence"] >= confLwrBnd] # detected fires of concern
 
-det.sort_values(by = 'confidence')
+print(det.describe()) # debug and verify confidence is above 50
+
+#det.sort_values(by = 'confidence')
 
 
 
