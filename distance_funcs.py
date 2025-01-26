@@ -58,8 +58,18 @@ def next_x_waypoints(x_points: int, flight, get_all = False):
         return packaged_waypoints
     else: 
         current_position = flight["last_position"]["latitude"], flight["last_position"]["longitude"]
-        closest_waypoint = min(flight["waypoints"], key = lambda x: math.sqrt(abs(packaged_waypoints[x][0] - flight["last_position"]["latitude"])^2 + abs(packaged_waypoints[x][1] - flight["last_position"]["longitude"])^2))
-        #^still broken, x needs to be only integers to be an index
+        #in the list of alternating lat, long, lat, long, find the pair that's physically closest to the current position by pythagorian
+        min_distance = float('inf')
+        closest_waypoint = None
+        closest_index = -1
+        for i in range(len(packaged_waypoints)):
+            lat, long = packaged_waypoints[i]
+            distance = math.sqrt((lat-current_position[0])**2+(long-current_position[1])**2)
+            if distance < min_distance:
+                min_distance = distance
+                closest_waypoint = (lat, long)
+                closest_index = 1
+
         print("current position: " + str(current_position))
         return closest_waypoint
 
@@ -69,6 +79,7 @@ def find_closest_route(fire_lat, fire_long):
     return ident
 
 if __name__ == "__main__": 
+    """
     update_json(50, -130, 20, -60)
     print(json.dumps(find_closest_flight(35.09, -90.88), indent=4))
 
@@ -78,3 +89,8 @@ if __name__ == "__main__":
     #print(find_closest_flight(35, -90))
     #example_flight = us_flights["flights"][2]
     #next_x_waypoints(5, example_flight)
+    """
+    fire_lat = 40
+    fire_long = -100
+    lat, long, ident = find_closest_flight(fire_lat, fire_long)
+    print(lat)
