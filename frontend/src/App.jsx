@@ -9,6 +9,7 @@ import { Marker } from 'react-leaflet/Marker'
 import { Icon } from 'leaflet'
 import { useMapEvents } from 'react-leaflet/hooks'
 import { LatLngBounds } from 'leaflet';
+import 'leaflet-rotatedmarker'
 // import { useMap } from 'react-leaflet/hooks'
 
 
@@ -23,19 +24,30 @@ function MapEventsComponent({ranges}) {
     iconSize: [25, 25]
   });
 
+  const planeIcon = new Icon({
+    iconUrl: 'assets/plane.png',
+    iconSize: [40, 40]
+  });
+
   const map = useMapEvents({
     moveend: () => {
       setCurrentBounds(map.getBounds());
     },
   });
-  
+
   const fetchFlights = async () => {
+    console.log('ranges', ranges)
     try {
       const response = await axios.post("http://localhost:5000/flights", {
-          bounds: map.getBounds(),
+          // bounds: () => {
+          //   bounds = map.getBounds();
+          //   print(bounds);
+          //   return [[bounds._southWest.lat, bounds._southWest.lng], [bounds._northEast.lat, bounds._northEast.lng]];
+          // },
           conf_ranges: ranges['conf']
         });
       setFireCoordinates(response.data.fireCoordinates);
+      setFlights(response.data.fireFlights);
       // const response = await axios.get('https://opensky-network.org/api/states/all');
       // setFlights(response.data.states);
       // setFlights(response.data);
@@ -47,7 +59,7 @@ function MapEventsComponent({ranges}) {
   useEffect(() => {
     fetchFlights();
     setCurrentBounds(map.getBounds());
-    const intervalId = setInterval(fetchFlights, 10000);
+    const intervalId = setInterval(fetchFlights, 120000);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -64,11 +76,23 @@ function MapEventsComponent({ranges}) {
   //         setFlightsDisplayed(flightsWithinBounds);
   //     }
   //   }, [currentBounds, flights]);
-
+  console.log(fireCoordinates)
+  console.log(flights[0])
   return (<div>
       {fireCoordinates.map((fireCoordinate, index) => (
         <div key={index}>
-          <Marker position={[fireCoordinate['lat'], fireCoordinate['lon']]} icon={fireIcon} />
+          <Marker position={[fireCoordinate['lat'], fireCoordinate['lon']]} 
+                  icon={fireIcon} 
+          />
+        </div>
+      ))}
+      {flights.map((flight, index) => (
+        <div key={1200 + index}>
+          <Marker position={[flight[0], flight[1]]} 
+                  rotationAngle={flight[2]}
+                  zIndexOffset={1000}
+                  icon={planeIcon}
+          />
         </div>
       ))}
     </div>);
@@ -115,7 +139,7 @@ function App() {
   // const hi = () => { console.log('hi'); }
   // Form() /************************************************** BIG FAT COMMENT FOR WHERE FORM IS AGHHHHHHHHHH ******************************************************************************/ 
   return (
-    <div style={{height: "100vh"}}>
+    <div style={{height: "100vh", boxSizing: "border-box", overflow: "hidden"}}>
       <nav className="navbar has-background-dark p-2 border">
         {/* <div className="navbar-brand">
           <a className="navbar-item has-text-white has-text-weight-bold">
@@ -124,18 +148,18 @@ function App() {
         </div> */}
         <div className="navbar-menu">
           <div className="navbar-start">
-            <a className="navbar-item has-text-white">Live View</a>
-            <a className="navbar-item has-text-white">Performance</a>
+            <a className="navbar-item has-text-white">FireFlys</a>
+            {/* <a className="navbar-item has-text-white">Performance</a> */}
           </div>
-          <div className="navbar-end">
+          {/* <div className="navbar-end">
             <a className="navbar-item has-text-white">Export</a>
             <a className="navbar-item has-text-white">Notifications</a>
-          </div>
+          </div> */}
         </div>
       </nav>
       <div className="columns is-gapless" style={{height: "calc(100% - 52px)", width: "100vw"}}>
         {/* Left Sidebar */}
-        <aside className="column is-2 has-background-dark p-3 border">
+        {/* <aside className="column is-2 has-background-dark p-3 border">
           <p className="has-text-white has-text-weight-bold mb-2">NETWORK</p>
             <ul>
               <li className="has-text-white">Greenwood Village</li>
@@ -146,9 +170,9 @@ function App() {
                 <li className="has-text-grey-light">Belleview</li>
               </ul>
             </ul>
-        </aside>
+        </aside> */}
         {/* Main map area */}
-        <div className="column is-7 border">
+        <div className="column is-9 border">
           <MapContainer
             center={[38.7946, -101.5348]}
             zoom={4.5}
@@ -163,16 +187,16 @@ function App() {
           </MapContainer>
         </div>
         {/* Right Sidebar */}
-        <aside className="column is-3 p-3 has-background-dark border">
+        <aside className="column is-3 p-5 has-background-dark border" style={{overflowY: "clip"}}>
           <div>
-            <p className="has-text-weight-bold has-text-white">Intersection</p>
-            <div className="box">
+            {/* <p className="has-text-weight-bold has-text-white">Intersection</p> */}
+            {/* <div className="box">
               <p><strong>Saturation:</strong> 62%</p>
               <p><strong>Volume:</strong> 1340/hr</p>
               <p><strong>Avg Delay:</strong> 73 sec</p>
               <p><strong>Travel Time:</strong> 95 sec</p>
-            </div>
-            <div className="box">
+            </div> */}
+            <div className="box m-3">
               <Form ranges={ranges} setRanges={setRanges}/>
             </div>
           </div>

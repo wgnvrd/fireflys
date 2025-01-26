@@ -14,15 +14,19 @@ def index():
 
 @app.route('/flights', methods=['POST'])
 def flights():
-    f_coord = fPI.firms_API() #feed in box and conf if necessary
-    fire_flights = []
-    for (x,y) in f_coord:
-        dist.find_closest_flight(x,y)
     data = request.json
-    bounds = data.get('bounds', [])
+    confidence_range = data.get('conf_ranges', [])
+    f_coord = fPI.firms_API(confLwrBnd=confidence_range["low"], confUpperBnd=confidence_range["high"]) #feed in box and conf if necessary
+    fire_flights = []
+    for entry in f_coord:
+        x, y = entry['lat'], entry['lon']
+        fire_flights += [dist.find_closest_flight(x,y)]
+    # print(confidence_range)
+    # print(fire_flights)
     # print(bounds)
     return {
-        "fireCoordinates": f_coord
+        "fireCoordinates": f_coord,
+        "fireFlights": fire_flights
     }
 
 

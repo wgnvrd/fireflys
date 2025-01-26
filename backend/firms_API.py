@@ -18,7 +18,6 @@ def firms_API(W = -125.0 , S = 25.0, E = -64.0, N = 50.0, confLwrBnd = 50.0, con
     # print(dat)
 
     det = dat.sort_values(by='confidence' , ascending=False)
-
     det = det[det["confidence"] >= confLwrBnd] # detected fires of concern
     det = det[det['confidence'] <= confUpperBnd] #filter out confirmed fires
 
