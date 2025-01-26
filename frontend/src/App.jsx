@@ -70,7 +70,7 @@ function App() {
     const intervalId = setInterval(fetchFlights, 1000);
     return () => clearInterval(intervalId);
   }, []);
-  
+  Form() /************************************************** BIG FAT COMMENT FOR WHERE FORM IS AGHHHHHHHHHH ******************************************************************************/ 
   return (
     <div style={{height: "100vh"}}>
       <nav className="navbar has-background-dark p-2 border">
@@ -160,6 +160,87 @@ function App() {
       )} */}
     </div>
   );
+}
+
+function Form() {
+  const [ranges , setRanges] = useState({
+    //degErr: 35,
+    conf: {
+      high: 100.0,
+      low: 50.0,
+    }
+  });
+
+  // function handleDegChange(e) {
+  //   try{
+  //     setRanges({
+  //       ...ranges,
+  //       deg: Number(e.target.value)
+  //     });
+  //   }
+  //   catch{
+  //     alert('Error: Invalid input. Please input a number.');
+  //   }
+  // }
+
+  function handleConfHighChange(e)
+  {
+    try{
+      setRanges({
+        ...ranges,
+        conf:
+        {
+          ...ranges.conf,
+          high: Number(e.target.value)
+        }
+      });
+    }
+    catch{
+      alert('Error: Invalid input. Please input a number.');
+    }
+  }
+
+  function handleConfLowChange(e){
+    try{
+      setRanges({
+        ...ranges,
+        conf:{
+          ...ranges.conf,
+          low: Number(e.target.value)
+        }
+      });
+    }
+    catch{
+      alert('Error: Invalid input. Please input a number.');
+    }
+  }
+  return (
+    <>
+      {/* <label> Degrees of Error:
+        <input 
+          value={ranges.deg}
+          onChange={handleDegChange}
+        />
+      </label> */}
+      <label>
+        Upper Confidence Bound:
+        <input 
+          value={ranges.conf.high}
+          onChange = {handleConfHighChange}
+
+        />
+
+      </label>
+
+      <label>
+        Lower Confidence Bound:
+        <input
+          value = {ranges.conf.low}
+          onChange ={handleConfLowChange}
+        />
+      </label>
+    </>
+  )
 }
 
 export default App;
