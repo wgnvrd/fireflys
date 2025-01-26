@@ -23,12 +23,16 @@ url = 'https://firms.modaps.eosdis.nasa.gov/api/area/csv/' + str(MAP_KEY) + '/MO
 dat = pd.read_csv(url) # data from url
 
 confLwrBnd = 50.0
+confUpperBnd = 100.0
 
 det = dat[dat["confidence"] >= confLwrBnd] # detected fires of concern
+det = det[det['confidence'] <= confUpperBnd] #filter out confirmed fires
 
-print(det.describe()) # debug and verify confidence is above 50
+# print(det.describe()) # debug and verify confidence filtered correctly
 
-#det.sort_values(by = 'confidence')
+det = det.sort_values(by='confidence' , ascending=False)
+
+
 
 
 
