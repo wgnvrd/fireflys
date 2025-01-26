@@ -15,11 +15,11 @@ us_flights = result.json()
 
 def find_closest_flight(fire_lat, fire_long):
     #pythagorian theorum for flight with closest lat/long
-    closest_flight = min(us_flights["flights"], key = lambda x: math.sqrt(abs(fire_lat - x["last_position"]["latitude"])^2 + abs(fire_long - x["last_position"]["longitude"])^2))
+    closest_flight = min(us_flights["flights"], key = lambda x: math.sqrt(abs(fire_lat - x["last_position"]["latitude"])**2 + abs(fire_long - x["last_position"]["longitude"])**2))
     return closest_flight["last_position"]["latitude"], closest_flight["last_position"]["longitude"]
 
-def next_x_waypoints(x_points, flight, get_all = False):
-    packaged_waypoints = [flight["waypoints"][x:x+2] for x in range(0, len(flight["waypoints"]), 2)]
+def next_x_waypoints(x_points: int, flight, get_all = False):
+    packaged_waypoints = [flight["waypoints"][i:i+2] for i in range(0, len(flight["waypoints"]), 2)]
 
     if len(flight["waypoints"]) == 0:
         print("No waypoints available for flight " + flight["ident"])
@@ -28,6 +28,7 @@ def next_x_waypoints(x_points, flight, get_all = False):
     else: 
         current_position = flight["last_position"]["latitude"], flight["last_position"]["longitude"]
         closest_waypoint = min(flight["waypoints"], key = lambda x: math.sqrt(abs(packaged_waypoints[x][0] - flight["last_position"]["latitude"])^2 + abs(packaged_waypoints[x][1] - flight["last_position"]["longitude"])^2))
+        #^still broken, x needs to be only integers to be an index
         print("current position: " + str(current_position))
         return closest_waypoint
 
@@ -38,7 +39,7 @@ def find_closest_route(fire_lat, fire_long):
 if __name__ == "__main__": 
     with open("us_flights.json", 'w', encoding='utf-8') as f:
         json.dump(us_flights, f, ensure_ascii=False, indent=4) 
-    #print(json.dumps(find_closest_flight(35, -90), indent=4))
+    print(json.dumps(find_closest_flight(35.09, -90.88), indent=4))
     #print(find_closest_flight(35, -90))
-    example_flight = us_flights["flights"][2]
-    next_x_waypoints(10, example_flight)
+    #example_flight = us_flights["flights"][2]
+    #next_x_waypoints(5, example_flight)
