@@ -37,7 +37,7 @@ def find_closest_flight(fire_lat, fire_long):
     with open("bounded_flights.json", 'r', encoding='utf-8') as r:
         bounded_flights = json.load(r)
     closest_flight = min(bounded_flights["flights"], key = lambda x: math.sqrt(abs(fire_lat - x["last_position"]["latitude"])**2 + abs(fire_long - x["last_position"]["longitude"])**2))
-    return closest_flight["last_position"]["latitude"], closest_flight["last_position"]["longitude"], closest_flight["ident"]
+    return closest_flight["last_position"]["latitude"], closest_flight["last_position"]["longitude"], closest_flight["last_position"]["heading"], closest_flight["ident"]
 
 def find_all_flights(fire_lat, fire_long):
     with open("bounded_flights.json", 'r', encoding='utf-8') as r:
