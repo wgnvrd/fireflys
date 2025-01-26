@@ -25,7 +25,7 @@ lat = det["latitude"].to_numpy()
 lon = det["longitude"].to_numpy()
 
 for (x, y) in zip(lat, lon):
-    print(flightaware_test.find_closest(x,y))
+    print(flightaware_test.find_closest(float(x), float(y)))
 
 
 

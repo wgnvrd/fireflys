@@ -15,7 +15,7 @@ us_flights = result.json()
 
 def find_closest(fire_lat, fire_long):
     #pythagorian theorum for flight with closest lat/long
-    closest_flight = min(us_flights["flights"], key = lambda x: math.sqrt(abs(fire_lat - x["last_position"]["latitude"])^2 + abs(fire_long - x["last_position"]["longitude"])^2))
+    closest_flight = min(us_flights["flights"], key = lambda x: math.sqrt(abs(fire_lat - x["last_position"]["latitude"])**2 + abs(fire_long - x["last_position"]["longitude"])**2))
     return closest_flight["last_position"]["latitude"], closest_flight["last_position"]["longitude"]
 """
 def next_x_waypoints(x_points, flight):
