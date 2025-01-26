@@ -1,8 +1,12 @@
-MAP_KEY = blah #insert key here
-
+from dotenv import load_dotenv
+import os
 import pandas as pd
 
-url = 'https://firms.modaps.eosdis.nasa.gov/mapserver/mapkey_status/?MAP_KEY=' + MAP_KEY + '/MODIS_NRT/-125,25,-64,50' #url and filter bounds for contigous US
+load_dotenv()
+
+MAP_KEY = os.getenv('MAP_KEY')
+
+url = 'https://firms.modaps.eosdis.nasa.gov/mapserver/mapkey_status/?MAP_KEY=' + str(MAP_KEY) + '/MODIS_NRT/-125,25,-64,50' #url and filter bounds for contigous US
 
 dat = pd.read_csv(url) # data from url
 
