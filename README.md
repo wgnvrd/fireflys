@@ -22,5 +22,6 @@ npm run dev
 ```
 ```bash
 cd backend
+pip3 install requirements.txt
 python app.py
 ```
