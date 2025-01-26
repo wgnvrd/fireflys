@@ -5,15 +5,24 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { MapContainer } from 'react-leaflet/MapContainer'
 import { TileLayer } from 'react-leaflet/TileLayer'
+import { Marker } from 'react-leaflet/Marker'
+import { Icon } from 'leaflet'
 import { useMapEvents } from 'react-leaflet/hooks'
 import { LatLngBounds } from 'leaflet';
 // import { useMap } from 'react-leaflet/hooks'
 
+
 function MapEventsComponent({ranges}) {
   const [flights, setFlights] = useState([]);
+  const [fireCoordinates, setFireCoordinates] = useState([]);
   const [flightsDisplayed, setFlightsDisplayed] = useState([]);
   const [currentBounds, setCurrentBounds] = useState(null);
   
+  const fireIcon = new Icon({
+    iconUrl: 'assets/exclamation.png',
+    iconSize: [25, 25]
+  });
+
   const map = useMapEvents({
     moveend: () => {
       setCurrentBounds(map.getBounds());
@@ -26,6 +35,7 @@ function MapEventsComponent({ranges}) {
           bounds: map.getBounds(),
           conf_ranges: ranges['conf']
         });
+      setFireCoordinates(response.data.fireCoordinates);
       // const response = await axios.get('https://opensky-network.org/api/states/all');
       // setFlights(response.data.states);
       // setFlights(response.data);
@@ -55,7 +65,13 @@ function MapEventsComponent({ranges}) {
   //     }
   //   }, [currentBounds, flights]);
 
-  return null;
+  return (<div>
+      {fireCoordinates.map((fireCoordinate, index) => (
+        <div key={index}>
+          <Marker position={[fireCoordinate['lat'], fireCoordinate['lon']]} icon={fireIcon} />
+        </div>
+      ))}
+    </div>);
 }
 
 function App() {
