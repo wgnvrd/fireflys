@@ -4,7 +4,7 @@ You would not believe your eyes..
 
 Reads in data from NASA's FIRMS API used to detect forest fires worldwide, and coordinates with flight data from FlightAware's AeroAPI to find a plane heading in the direction of high likelyhood forest fires to capture better imagery. 
 
-Inspired by the <insert konoha's bill here>.
+Inspired by a proposal to equip commercial airliners with imaging equipment to obtain enhanced imagery and data about remote wildfires.
 
 Main: gets data from the NASA FIRMS API, filters reports with low confidence out, and produces the coordinates of possible forest fires with high confidence levels.
 
