@@ -22,7 +22,7 @@ def update_json(lat1, long1, lat2, long2):
 
 def find_closest_flight(fire_lat, fire_long): 
     #pythagorian theorum for flight with closest lat/long
-    with open("data.json", 'r', encoding='utf-8') as r:
+    with open("bounded.json", 'r', encoding='utf-8') as r:
         reloaded_json = json.load(r)
     closest_flight = min(reloaded_json["flights"], key = lambda x: math.sqrt(abs(fire_lat - x["last_position"]["latitude"])**2 + abs(fire_long - x["last_position"]["longitude"])**2))
     return closest_flight["last_position"]["latitude"], closest_flight["last_position"]["longitude"]
