@@ -25,8 +25,8 @@ def firms_API(W = -125.0 , S = 25.0, E = -64.0, N = 50.0, confLwrBnd = 50.0, con
     lat = det["latitude"].to_numpy()
     lon = det["longitude"].to_numpy()
 
-    for (x, y) in zip(lat, lon):
-        print(dist.find_closest(float(x), float(y)))
+    
+    return dist.find_closest(float(lat), float(long))
 
 
 
