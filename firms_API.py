@@ -26,7 +26,8 @@ def firms_API(W = -125.0 , S = 25.0, E = -64.0, N = 50.0, confLwrBnd = 50.0, con
     lon = det["longitude"].to_numpy()
 
     
-    return dist.find_closest(float(lat), float(long))
+    return (lat, lon)
+
 
 
 
