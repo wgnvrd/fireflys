@@ -1,16 +1,17 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 import pandas as pd
 import numpy as np
 import firms_API as fPI
 import distance_funcs as dist
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 CORS(app)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # return render_template('index.html')
+    return send_from_directory(app.static_folder, 'index.html')
 
 @app.route('/flights', methods=['POST'])
 def flights():
