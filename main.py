@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 import pandas as pd
-import flightaware_test
+import distance_funcs as dist
 
 load_dotenv()
 
@@ -25,7 +25,7 @@ lat = det["latitude"].to_numpy()
 lon = det["longitude"].to_numpy()
 
 for (x, y) in zip(lat, lon):
-    print(flightaware_test.find_closest(float(x), float(y)))
+    print(dist.find_closest(float(x), float(y)))
 
 
 
