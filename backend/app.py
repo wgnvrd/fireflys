@@ -15,8 +15,9 @@ def flights():
     data = request.json
     print(data)
     bounds = data.get('bounds', [])
-    print(bounds)
+    # print(bounds)
     return {}
+
 
 # @app.route('/analyze', methods=['POST'])
 # def analyze():

@@ -6,15 +6,70 @@ import axios from 'axios';
 import { MapContainer } from 'react-leaflet/MapContainer'
 import { TileLayer } from 'react-leaflet/TileLayer'
 import { useMapEvents } from 'react-leaflet/hooks'
+import { LatLngBounds } from 'leaflet';
 // import { useMap } from 'react-leaflet/hooks'
 
-function App() {
-  const [currentBounds, setCurrentBounds] = useState(null);
+function MapEventsComponent({ranges}) {
   const [flights, setFlights] = useState([]);
-  const [map, setMap] = useState(null);
+  const [flightsDisplayed, setFlightsDisplayed] = useState([]);
+  const [currentBounds, setCurrentBounds] = useState(null);
+  
+  const map = useMapEvents({
+    moveend: () => {
+      setCurrentBounds(map.getBounds());
+    },
+  });
+  
+  const fetchFlights = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/flights", {
+          bounds: map.getBounds(),
+          conf_ranges: ranges['conf']
+        });
+      // const response = await axios.get('https://opensky-network.org/api/states/all');
+      // setFlights(response.data.states);
+      // setFlights(response.data);
+    } catch (error) {
+      console.error("Error fetching flights: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFlights();
+    setCurrentBounds(map.getBounds());
+    const intervalId = setInterval(fetchFlights, 10000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // useEffect(() => {
+  //     console.log("currentBounds", currentBounds);
+  //     if (flights?.length){
+          
+  //         const flightsWithinBounds = flights.filter((flight) => {
+  //             if (!currentBounds || !flight[5] || !flight[6]) {
+  //                 return false;
+  //             }
+  //             return currentBounds.contains([flight[6],flight[5]]);
+  //         });
+  //         setFlightsDisplayed(flightsWithinBounds);
+  //     }
+  //   }, [currentBounds, flights]);
+
+  return null;
+}
+
+function App() {
   // const [state, setState] = useState(null);
   // const [numbers, setNumbers] = useState("");
   // const [result, setResult] = useState(null);
+
+  const [ranges , setRanges] = useState({
+    //degErr: 35,
+    conf: {
+      high: 100.0,
+      low: 50.0,
+    }
+  });
 
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
@@ -31,54 +86,26 @@ function App() {
   //     console.error("Error analyzing data: ", error);
   //   }
   // };
-  function MapEventsComponent() {
-    const map = useMapEvents({
-      moveend: () => {
-        console.log(map.getBounds());
-        setCurrentBounds(map.getBounds());
-      },
-    });
-    setMap(map);
-    return null;
-  }
   // const map = useMapEvents({
   //     moveend: () => {
   //         setCurrentBounds(map.getBounds());
   //     },
   // })
 
-  const fetchFlights = async () => {
-    try {
-      const response = axios.post("http://localhost:5000/flights", {
-          bounds: currentBounds,
-        }).then((response) => {
-          setFlights(response.data);
-          // setResult(response.data);
-        }
-      )
-    } catch (error) {
-      console.error("Error fetching flights: ", error);
-    }
-  };
-
+  // bounds = new LatLngBounds(
+  //             [-125, 25],
+  //             [-64, 50]
+  //           )
   // const hi = () => { console.log('hi'); }
-  useEffect(() => {
-    // hi();
-    fetchFlights();
-    // console.log(map.getBounds());
-    // setCurrentBounds(map.getBounds());
-    const intervalId = setInterval(fetchFlights, 1000);
-    return () => clearInterval(intervalId);
-  }, []);
-  Form() /************************************************** BIG FAT COMMENT FOR WHERE FORM IS AGHHHHHHHHHH ******************************************************************************/ 
+  // Form() /************************************************** BIG FAT COMMENT FOR WHERE FORM IS AGHHHHHHHHHH ******************************************************************************/ 
   return (
     <div style={{height: "100vh"}}>
       <nav className="navbar has-background-dark p-2 border">
-        <div className="navbar-brand">
+        {/* <div className="navbar-brand">
           <a className="navbar-item has-text-white has-text-weight-bold">
             City Dashboard
-          </a>
-        </div>
+          </a>``
+        </div> */}
         <div className="navbar-menu">
           <div className="navbar-start">
             <a className="navbar-item has-text-white">Live View</a>
@@ -107,19 +134,20 @@ function App() {
         {/* Main map area */}
         <div className="column is-7 border">
           <MapContainer
-            center={[51.505, -0.09]}
-            zoom={13}
+            center={[38.7946, -101.5348]}
+            zoom={4.5}
+            // maxBounds={bounds}
             style={{ height: "100%", width: "100%", backgroundColor: "grey" }}
           >
             <TileLayer
               attribution='&copy; CNES, Distribution Airbus DS, © Airbus DS, © PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.png"
             />
-            <MapEventsComponent />
+            <MapEventsComponent ranges={ranges} />
           </MapContainer>
         </div>
         {/* Right Sidebar */}
-        <aside className="column is-3 has-background-dark p-3 border">
+        <aside className="column is-3 p-3 has-background-dark border">
           <div>
             <p className="has-text-weight-bold has-text-white">Intersection</p>
             <div className="box">
@@ -129,7 +157,7 @@ function App() {
               <p><strong>Travel Time:</strong> 95 sec</p>
             </div>
             <div className="box">
-
+              <Form ranges={ranges} setRanges={setRanges}/>
             </div>
           </div>
         </aside>
@@ -162,14 +190,7 @@ function App() {
   );
 }
 
-function Form() {
-  const [ranges , setRanges] = useState({
-    //degErr: 35,
-    conf: {
-      high: 100.0,
-      low: 50.0,
-    }
-  });
+function Form({ ranges, setRanges }) {
 
   // function handleDegChange(e) {
   //   try{
@@ -223,6 +244,14 @@ function Form() {
         />
       </label> */}
       <label>
+        Lower Confidence Bound:
+        <input
+          value = {ranges.conf.low}
+          onChange ={handleConfLowChange}
+        />
+      </label>
+      <br />
+      <label>
         Upper Confidence Bound:
         <input 
           value={ranges.conf.high}
@@ -230,14 +259,6 @@ function Form() {
 
         />
 
-      </label>
-
-      <label>
-        Lower Confidence Bound:
-        <input
-          value = {ranges.conf.low}
-          onChange ={handleConfLowChange}
-        />
       </label>
     </>
   )
